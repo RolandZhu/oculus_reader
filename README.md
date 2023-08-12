@@ -36,7 +36,11 @@ sudo apt install android-tools-adb
 
 On other systems follow the steps from the 'app_source' folder.
 
-### Set up of a new Oculus Quest device
+## Install
+`pip install -e .`
+`pip install -r requirements.txt`
+
+## Set up of a new Oculus Quest device
 
 1. Determine your Oculus Quest account name:
 If you haven’t used Oculus Quest before, start it and follow the steps to create your profile and get yourself started. Otherwise follow these steps to find out your username:

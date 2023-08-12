@@ -1,3 +1,5 @@
 numpy
 pure-python-adb
 pyyaml
+pybullet
+scipy
