@@ -203,9 +203,8 @@ def main():
     oculus_reader = OculusReader()
 
     while True:
-        time.sleep(0.02)
+        time.sleep(0.3)
         print(oculus_reader.get_transformations_and_buttons())
-        print('---')
 
 
 if __name__ == '__main__':

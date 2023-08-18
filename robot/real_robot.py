@@ -8,7 +8,7 @@ This file allow Ubuntu/Mac/Windows control the robot using position/velocity.
 Set your Ubuntu PC IP to 192.168.1.200, gateview to 255.255.255.1, netmask 24. (refer to https://wiki.teltonika-networks.com/view/Setting_up_a_Static_IP_address_on_a_Ubuntu_16.04_PC)
 """
 
-class RobotController():
+class RealRobot():
     def __init__(self):
         self.UDP_IP_IN = "192.168.1.200"     # Ubuntu IP, should be the same as Matlab shows
         self.UDP_PORT_IN = 57831             # Ubuntu receive port, should be the same as Matlab shows
@@ -26,6 +26,8 @@ class RobotController():
         self.robot_1_joints, self.robot_1_vels, self.robot_1_ATI_force = None, None, None
         self.robot_2_joints, self.robot_2_vels, self.robot_2_ATI_force = None, None, None
 
+        self.gripper = 0
+        
     def receive(self):
         data, _ = self.s_in.recvfrom(1024)
         unpacked_data = np.array(self.unpacker.unpack(data))
@@ -38,6 +40,7 @@ class RobotController():
             self.s_out.sendto(joint_1, (self.UDP_IP_OUT, self.UDP_PORT_OUT_1))
         
         if target_joints_robot_2 is not None:
+            target_joints_robot_2 = target_joints_robot_2[:6]
             joint_2 = target_joints_robot_2.astype('d').tobytes()
             self.s_out.sendto(joint_2, (self.UDP_IP_OUT, self.UDP_PORT_OUT_2))
 
@@ -48,13 +51,18 @@ class RobotController():
         time.sleep(0.05)
         self.s_out.sendto(zero, (self.UDP_IP_OUT, self.UDP_PORT_OUT_3))
 
-        time.sleep(0.3)
+        time.sleep(0.2)
 
         self.s_out.sendto(one, (self.UDP_IP_OUT, self.UDP_PORT_OUT_3))
         time.sleep(0.05)
         self.s_out.sendto(zero, (self.UDP_IP_OUT, self.UDP_PORT_OUT_3))
 
-        time.sleep(2)
+        if self.gripper == 0:
+            self.gripper = 1
+        elif self.gripper == 1:
+            self.gripper = 0
+        
+        # time.sleep(2)
 
     def step(self, T=0.08):
         st = time.time()
@@ -62,13 +70,13 @@ class RobotController():
             self.receive()
 
 if __name__ == '__main__':
-    rc = RobotController()
+    rc = RealRobot()
 
     print('home')
-    target = np.array([0, 0, 0, 0, -90, 0])
+    target = np.array([10, 0, 0, 0, -90, 0])
     rc.send(target_joints_robot_2=target)
     rc.step(3)
 
     rc.gripper_move()
 
-    rc.gripper_move()
+    # rc.gripper_move()

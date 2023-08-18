@@ -1,5 +1,4 @@
 numpy
 pure-python-adb
 pyyaml
-pybullet
-scipy
+h5py
